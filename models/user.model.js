@@ -4,6 +4,9 @@ const { Schema } = mongoose;
 const childSchema = new Schema({
 	_id: {
 		type: Schema.Types.ObjectId,
+	},
+	user: {
+		type: Schema.Types.ObjectId,
 		ref: 'User',
 		unique: true,
 	},

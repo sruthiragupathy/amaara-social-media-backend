@@ -5,6 +5,7 @@ const {
 	loginUser,
 	getAllUsers,
 	deleteAllUsers,
+	findUserByUserName,
 	updateFollowersandFollowingListsOnFollow,
 	updateUser,
 } = require('../controllers/user.controller');
@@ -15,11 +16,14 @@ router.post('/signup', signupUser);
 router.post('/login', loginUser);
 
 router.get('/users', isAuthorized, getAllUsers);
+router.get('/user/:userName', isAuthorized, findUserByUserName);
 router.post('/user', isAuthorized, updateUser);
 router.post(
 	'/user/follow',
 	isAuthorized,
 	updateFollowersandFollowingListsOnFollow,
 );
+
+router.delete('/users', isAuthorized, deleteAllUsers);
 
 module.exports = router;

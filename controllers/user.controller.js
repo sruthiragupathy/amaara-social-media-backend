@@ -140,6 +140,21 @@ const unFollowUser = async (
 	}
 };
 
+const findUserByUserName = async (req, res) => {
+	const { userName } = req.params;
+	try {
+		const user = await User.findOne({ userName });
+		await user.populate('followersList.user').execPopulate();
+		await user.populate('followingList.user').execPopulate();
+		// await user.save();
+		return res.json({
+			user,
+		});
+	} catch (error) {
+		console.error({ error });
+	}
+};
+
 const updateFollowersandFollowingListsOnFollow = async (req, res) => {
 	const { userId } = req;
 	const { followingUserId } = req.body;
@@ -147,12 +162,33 @@ const updateFollowersandFollowingListsOnFollow = async (req, res) => {
 		//find currentUser and following User Object
 		const currentUser = await User.findById(userId);
 		const followingUser = await User.findById(followingUserId);
-		const isCurrentUserAlreadyFollowingTheFollowedUser =
-			currentUser.followingList.id(followingUserId);
+		const isCurrentUserAlreadyFollowingTheFollowedUser = currentUser
+			.followingList.length
+			? currentUser.followingList.id(followingUserId)
+			: 0;
 		if (isCurrentUserAlreadyFollowingTheFollowedUser) {
-			unFollowUser(currentUser, followingUser, userId, followingUserId);
+			//unfollow functionality
+			//remove the following user from the current user's following list
+			await currentUser.followingList.id(followingUserId).remove();
+			await currentUser.save();
+			//remove the follower from the following user's followersList
+			await followingUser.followersList.id(userId).remove();
+			await followingUser.save();
 		} else {
-			followUser(currentUser, followingUser, userId, followingUserId);
+			// followUser(currentUser, followingUser, userId, followingUserId);
+			//follow functionality
+			//update the following list of current user with following user
+			await currentUser.followingList.push({
+				_id: followingUserId,
+				user: followingUserId,
+			});
+			await currentUser.save();
+			//update the followers list of following user with current user
+			await followingUser.followersList.push({
+				_id: userId,
+				user: followingUserId,
+			});
+			await followingUser.save();
 		}
 		//get all the updated users and return
 		const users = await User.find();
@@ -179,6 +215,7 @@ module.exports = {
 	signupUser,
 	loginUser,
 	getAllUsers,
+	findUserByUserName,
 	deleteAllUsers,
 	updateUser,
 	updateFollowersandFollowingListsOnFollow,

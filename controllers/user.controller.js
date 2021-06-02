@@ -78,6 +78,7 @@ const getAllUsers = async (req, res) => {
 		});
 	} catch (error) {
 		console.error({ error });
+		res.status(401).json({ response: error.message });
 	}
 };
 
@@ -90,7 +91,6 @@ const updateUser = async (req, res) => {
 			throw new Error("You cannot edit someone else's account");
 		}
 		const updatedUser = await User.findByIdAndUpdate(userId, req.body);
-		updatedUser.password = undefined;
 		res.json({ user: updatedUser });
 	} catch (error) {
 		console.error({ error });
@@ -118,6 +118,7 @@ const followUser = async (
 		await followingUser.save();
 	} catch (error) {
 		console.error({ error });
+		res.status(401).json({ response: error.message });
 	}
 };
 
@@ -137,6 +138,7 @@ const unFollowUser = async (
 		await followingUser.save();
 	} catch (error) {
 		console.error({ error });
+		res.status(401).json({ response: error.message });
 	}
 };
 
@@ -152,6 +154,7 @@ const findUserByUserName = async (req, res) => {
 		});
 	} catch (error) {
 		console.error({ error });
+		res.status(401).json({ response: error.message });
 	}
 };
 
@@ -197,6 +200,7 @@ const updateFollowersandFollowingListsOnFollow = async (req, res) => {
 		});
 	} catch (error) {
 		console.error({ error });
+		res.status(401).json({ response: error.message });
 	}
 };
 
@@ -208,6 +212,7 @@ const deleteAllUsers = async (req, res) => {
 		});
 	} catch (error) {
 		console.error({ error });
+		res.status(401).json({ response: error.message });
 	}
 };
 

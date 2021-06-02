@@ -1,5 +1,5 @@
 const express = require('express');
-const isAuthorized = require('../controllers/middleware');
+const { isAuthorized } = require('../controllers/middleware');
 const {
 	signupUser,
 	loginUser,

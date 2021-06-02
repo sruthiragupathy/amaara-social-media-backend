@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const userRoutes = require('./routes/user.route');
+const tweetRoutes = require('./routes/tweet.route');
 
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -19,6 +20,7 @@ const PORT = process.env.PORT || 3000;
 
 //Routes
 app.use('/api', userRoutes);
+app.use('/api', tweetRoutes);
 
 app.listen(PORT, () => {
 	console.log('Server running at port ' + PORT);

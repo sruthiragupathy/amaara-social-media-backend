@@ -1,4 +1,5 @@
 var jwt = require('jsonwebtoken');
+const Tweet = require('../models/tweet.model');
 
 const isAuthorized = (req, res, next) => {
 	const token = req.headers.authorization;
@@ -13,4 +14,15 @@ const isAuthorized = (req, res, next) => {
 	}
 };
 
-module.exports = isAuthorized;
+const getTweetById = async (req, res, next) => {
+	const { tweetId } = req.params;
+	try {
+		const tweet = await Tweet.findById(tweetId);
+		req.tweet = tweet;
+		next();
+	} catch (error) {
+		console.error({ error });
+	}
+};
+
+module.exports = { isAuthorized, getTweetById };

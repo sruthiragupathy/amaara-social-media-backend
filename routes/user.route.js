@@ -8,6 +8,7 @@ const {
 	findUserByUserName,
 	updateFollowersandFollowingListsOnFollow,
 	updateUser,
+	// findCurrentUser,
 } = require('../controllers/user.controller');
 
 const router = express.Router();
@@ -17,6 +18,7 @@ router.post('/login', loginUser);
 
 router.get('/users', isAuthorized, getAllUsers);
 router.get('/user/:userName', isAuthorized, findUserByUserName);
+// router.get('/currentuser', isAuthorized, findCurrentUser);
 router.post('/user', isAuthorized, updateUser);
 router.post(
 	'/user/follow',

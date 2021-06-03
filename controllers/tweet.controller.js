@@ -21,7 +21,8 @@ const postTweet = async (req, res) => {
 			userId: req.userId,
 		});
 		await newTweet.save();
-		res.json({ tweets: newTweet });
+		await newTweet.populate('userId').execPopulate();
+		res.json({ tweet: newTweet });
 	} catch (error) {
 		console.error({ error });
 		res.status(401).json({ response: error.message });
@@ -56,7 +57,7 @@ const updateTweetReactions = async (req, res) => {
 			await tweet[reactionName].reactedUsers.push({ _id: userId });
 		}
 		await tweet.save();
-		await tweet.populate('userId');
+		await tweet.populate('userId').execPopulate();
 		res.json({ tweet });
 	} catch (error) {
 		console.error({ error });

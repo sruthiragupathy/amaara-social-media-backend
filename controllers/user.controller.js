@@ -43,15 +43,15 @@ const signupUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
 	const { email, password } = req.body;
+	console.log({ email, password });
 	try {
-		const user = await User.findOne({ email });
-
+		const user = await User.findOne({ email }).select('+password');
 		if (!user) {
 			throw new Error('User does not exist, Signup to enter');
 		}
-
 		//decrypt password and validate
 		const isPasswordValid = await bcrypt.compare(password, user.password);
+		console.log({ isPasswordValid });
 		if (!isPasswordValid) {
 			throw new Error('Email and password does not match');
 		}
@@ -66,6 +66,7 @@ const loginUser = async (req, res) => {
 			user,
 		});
 	} catch (error) {
+		console.log({ error });
 		return res.status(401).json({ error: error.message });
 	}
 };

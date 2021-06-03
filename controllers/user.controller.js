@@ -59,7 +59,7 @@ const loginUser = async (req, res) => {
 			expiresIn: '24h',
 		});
 
-		user.password = 'undefined';
+		user.password = undefined;
 		res.json({
 			token,
 			user,

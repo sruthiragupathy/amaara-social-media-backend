@@ -1,5 +1,6 @@
 const Tweet = require('../models/tweet.model');
 const { extend } = require('lodash');
+const userModel = require('../models/user.model');
 
 const getAllTweets = async (req, res) => {
 	try {
@@ -7,6 +8,22 @@ const getAllTweets = async (req, res) => {
 			.sort({ createdAt: -1 })
 			.populate({ path: 'userId' });
 		res.json({ tweets: allTweets });
+	} catch (error) {
+		console.error({ error });
+		res.status(401).json({ response: error.message });
+	}
+};
+
+const getTweetsByUserId = async (req, res) => {
+	const { userId } = req;
+	try {
+		const tweets = await Tweet.find({ userId })
+			.sort({ createdAt: -1 })
+			.populate({ path: 'userId' });
+		const userProfile = await userModel.findOne(userId);
+		await userProfile.populate('followersList.user').execPopulate();
+		await userProfile.populate('followingList.user').execPopulate();
+		res.json({ userProfile, tweets });
 	} catch (error) {
 		console.error({ error });
 		res.status(401).json({ response: error.message });
@@ -71,7 +88,6 @@ const updateTweet = async (req, res) => {
 	try {
 		tweet.tweet = editedTweet;
 		await tweet.save();
-		console.log({ tweet });
 		await tweet.populate('userId').execPopulate();
 		res.json({ tweet });
 	} catch (error) {
@@ -102,6 +118,7 @@ module.exports = {
 	getAllTweets,
 	postTweet,
 	findTweetById,
+	getTweetsByUserId,
 	updateTweetReactions,
 	updateTweet,
 	deleteTweet,

@@ -50,7 +50,6 @@ const loginUser = async (req, res) => {
 		}
 		//decrypt password and validate
 		const isPasswordValid = await bcrypt.compare(password, user.password);
-		console.log({ isPasswordValid });
 		if (!isPasswordValid) {
 			throw new Error('Email and password does not match');
 		}

@@ -5,16 +5,15 @@ const bcrypt = require('bcrypt');
 const signupUser = async (req, res) => {
 	try {
 		//check if user exists
-		const user = await User.findOne({ email: req.body.email });
+		const user = await User.findOne({ email: req.body.user.email });
+		console.log({ user });
 		if (user) {
-			return res.json({ message: 'User Already exists' });
+			throw new Error('User Already exists');
 		}
 		//check if username exists
-		const userName = await User.findOne({ userName: req.body.userName });
+		const userName = await User.findOne({ userName: req.body.user.userName });
 		if (userName) {
-			return res.json({
-				message: 'UserName Already exists, try a different username',
-			});
+			throw new Error('UserName Already exists, try a different username');
 		}
 		//encrypt password and save new user
 		const newUser = new User({
@@ -162,13 +161,13 @@ const updateFollowersandFollowingListsOnFollow = async (req, res) => {
 	try {
 		//find currentUser and following User Object
 		const currentUser = await User.findById(userId);
+		console.log({ currentUser });
 		const followingUser = await User.findById(followingUserId);
+		console.log(currentUser.followingList.id(followingUserId));
 
-		const isCurrentUserAlreadyFollowingTheFollowedUser = currentUser
-			.followingList.length
-			? currentUser.followingList.id(followingUserId)
-			: 0;
-		if (isCurrentUserAlreadyFollowingTheFollowedUser !== 0) {
+		const isCurrentUserAlreadyFollowingTheFollowedUser =
+			currentUser.followingList.id(followingUserId);
+		if (isCurrentUserAlreadyFollowingTheFollowedUser) {
 			//unfollow functionality
 			//remove the following user from the current user's following list
 			await currentUser.followingList.id(followingUserId).remove();
@@ -193,7 +192,7 @@ const updateFollowersandFollowingListsOnFollow = async (req, res) => {
 			});
 			await followingUser.save();
 		}
-		//get all the updated users and return
+		// get all the updated users and return
 		const users = await User.find();
 		return res.json({
 			users,

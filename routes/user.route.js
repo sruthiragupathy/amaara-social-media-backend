@@ -26,6 +26,6 @@ router.post(
 	updateFollowersandFollowingListsOnFollow,
 );
 
-router.delete('/users', isAuthorized, deleteAllUsers);
+router.delete('/users', deleteAllUsers);
 
 module.exports = router;

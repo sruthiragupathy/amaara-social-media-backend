@@ -18,10 +18,9 @@ const signupUser = async (req, res) => {
 		}
 		//encrypt password and save new user
 		const newUser = new User({
-			...req.body,
+			...req.body.user,
 			followersList: [],
 			followingList: [],
-			bio: '',
 		});
 		const salt = await bcrypt.genSalt(10);
 		newUser.password = await bcrypt.hash(newUser.password, salt);
@@ -164,11 +163,12 @@ const updateFollowersandFollowingListsOnFollow = async (req, res) => {
 		//find currentUser and following User Object
 		const currentUser = await User.findById(userId);
 		const followingUser = await User.findById(followingUserId);
+
 		const isCurrentUserAlreadyFollowingTheFollowedUser = currentUser
 			.followingList.length
 			? currentUser.followingList.id(followingUserId)
 			: 0;
-		if (isCurrentUserAlreadyFollowingTheFollowedUser) {
+		if (isCurrentUserAlreadyFollowingTheFollowedUser !== 0) {
 			//unfollow functionality
 			//remove the following user from the current user's following list
 			await currentUser.followingList.id(followingUserId).remove();
@@ -180,6 +180,7 @@ const updateFollowersandFollowingListsOnFollow = async (req, res) => {
 			// followUser(currentUser, followingUser, userId, followingUserId);
 			//follow functionality
 			//update the following list of current user with following user
+
 			await currentUser.followingList.push({
 				_id: followingUserId,
 				user: followingUserId,
@@ -188,7 +189,7 @@ const updateFollowersandFollowingListsOnFollow = async (req, res) => {
 			//update the followers list of following user with current user
 			await followingUser.followersList.push({
 				_id: userId,
-				user: followingUserId,
+				user: userId,
 			});
 			await followingUser.save();
 		}

@@ -18,7 +18,6 @@ router.post('/login', loginUser);
 
 router.get('/users', isAuthorized, getAllUsers);
 router.get('/user/:userName', isAuthorized, findUserByUserName);
-// router.get('/currentuser', isAuthorized, findCurrentUser);
 router.post('/user', isAuthorized, updateUser);
 router.post(
 	'/user/follow',

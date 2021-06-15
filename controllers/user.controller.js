@@ -79,22 +79,6 @@ const getAllUsers = async (req, res) => {
 	}
 };
 
-const updateUser = async (req, res) => {
-	const { userId } = req;
-
-	try {
-		//possible to edit only your account
-		if (userId !== req.body._id) {
-			throw new Error("You cannot edit someone else's account");
-		}
-		const updatedUser = await User.findByIdAndUpdate(userId, req.body);
-		res.json({ user: updatedUser });
-	} catch (error) {
-		console.error({ error });
-		res.status(401).json({ response: error.message });
-	}
-};
-
 const followUser = async (
 	currentUser,
 	followingUser,
@@ -155,15 +139,27 @@ const findUserByUserName = async (req, res) => {
 	}
 };
 
+const updateUser = async (req, res) => {
+	const { userId } = req;
+	const { bio } = req.body;
+	try {
+		const currentUser = await User.findById(userId);
+		currentUser.bio = bio;
+		await currentUser.save();
+		res.json({ user: currentUser });
+	} catch (error) {
+		console.error({ error });
+		res.status(401).json({ response: error.message });
+	}
+};
+
 const updateFollowersandFollowingListsOnFollow = async (req, res) => {
 	const { userId } = req;
 	const { followingUserId } = req.body;
 	try {
 		//find currentUser and following User Object
 		const currentUser = await User.findById(userId);
-		console.log({ currentUser });
 		const followingUser = await User.findById(followingUserId);
-		console.log(currentUser.followingList.id(followingUserId));
 
 		const isCurrentUserAlreadyFollowingTheFollowedUser =
 			currentUser.followingList.id(followingUserId);

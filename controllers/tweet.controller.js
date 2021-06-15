@@ -1,5 +1,4 @@
 const Tweet = require('../models/tweet.model');
-const { extend } = require('lodash');
 const userModel = require('../models/user.model');
 
 const getAllTweets = async (req, res) => {

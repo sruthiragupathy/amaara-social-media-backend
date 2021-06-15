@@ -57,6 +57,8 @@ const loginUser = async (req, res) => {
 		});
 
 		user.password = undefined;
+		await user.populate('followersList.user').execPopulate();
+		await user.populate('followingList.user').execPopulate();
 		res.json({
 			token,
 			user,
@@ -129,7 +131,6 @@ const findUserByUserName = async (req, res) => {
 		const user = await User.findOne({ userName });
 		await user.populate('followersList.user').execPopulate();
 		await user.populate('followingList.user').execPopulate();
-		// await user.save();
 		return res.json({
 			user,
 		});

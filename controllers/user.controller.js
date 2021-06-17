@@ -1,12 +1,12 @@
 const User = require('../models/user.model');
 var jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const { postNotification } = require('./notification.controller');
 
 const signupUser = async (req, res) => {
 	try {
 		//check if user exists
 		const user = await User.findOne({ email: req.body.user.email });
-		console.log({ user });
 		if (user) {
 			throw new Error('User Already exists');
 		}
@@ -173,7 +173,6 @@ const updateFollowersandFollowingListsOnFollow = async (req, res) => {
 			await followingUser.followersList.id(userId).remove();
 			await followingUser.save();
 		} else {
-			// followUser(currentUser, followingUser, userId, followingUserId);
 			//follow functionality
 			//update the following list of current user with following user
 
@@ -187,6 +186,7 @@ const updateFollowersandFollowingListsOnFollow = async (req, res) => {
 				_id: userId,
 				user: userId,
 			});
+			await postNotification(followingUserId, userId, 'follow');
 			await followingUser.save();
 		}
 		// get all the updated users and return

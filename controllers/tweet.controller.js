@@ -1,5 +1,6 @@
 const Tweet = require('../models/tweet.model');
 const userModel = require('../models/user.model');
+const { postNotification } = require('./notification.controller');
 
 const getAllTweets = async (req, res) => {
 	try {
@@ -71,6 +72,7 @@ const updateTweetReactions = async (req, res) => {
 		} else {
 			tweet[reactionName].reactionCount += reactionCount;
 			await tweet[reactionName].reactedUsers.push({ _id: userId });
+			await postNotification(tweet.userId, userId, 'react', tweet._id);
 		}
 		await tweet.save();
 		await tweet.populate('userId').execPopulate();
